@@ -4,13 +4,26 @@
   "description": "Examples and Tutorials used in the Keypom Documentation",
   "main": "lib/index.js",
   "scripts": {
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "basic:simple-keypom": "node basic-tutorials/sdk/simple-example",
+    "basic:nft-keypom": "node basic-tutorials/sdk/nft-example",
+    "basic:ft-keypom": "node basic-tutorials/sdk/ft-example",
+    "basic:fc-keypom": "node basic-tutorials/sdk/fc-example",
+    "basic:simple-naj": "node basic-tutorials/near-api-js/simple-near-example",
+    "basic:nft-naj": "node basic-tutorials/near-api-js/nft-near-example",
+    "basic:ft-naj": "node basic-tutorials/near-api-js/ft-near-example",
+    "basic:fc-naj": "node basic-tutorials/near-api-js/fc-near-example",
+    "ticketing:create-drop": "node advanced-tutorials/ticket-app/utils/createTickDrop",
+    "ticketing:start": "cd advanced-tutorials/ticket-app && pnpm start && cd .. && cd ..",
+    "dao:create-drop": "node advanced-tutorials/dao-onboarding/createDaoDrop",
+    "trial:create-drop": "node advanced-tutorials/trial-accounts/create-trial-drop"
+
   },
   "author": "benkurrek, mattlockyer",
   "license": "MIT",
   "dependencies": {
-    "@keypom/core": "workspace:*",
-    "@keypom/selector": "workspace:*",
+    "@keypom/core": "^1.0.0-rc.2",
+    "@keypom/selector": "^1.0.0-rc.2",
     "bn.js": "^5.2.1"
   },
   "ava": {
