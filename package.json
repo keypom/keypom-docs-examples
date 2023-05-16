@@ -4,7 +4,8 @@
   "description": "Examples and Tutorials used in the Keypom Documentation",
   "main": "lib/index.js",
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
+    "basic-all-sdk": "yarn basic:simple-keypom && yarn basic:nft-keypom && yarn basic:ft-keypom && yarn basic:fc-keypom",
+    "basic-all-naj": "yarn basic:simple-near && yarn basic:nft-near && yarn basic:ft-near && yarn basic:fc-near",
     "basic:simple-keypom": "node basic-tutorials/simple-drop/simple-example",
     "basic:nft-keypom": "node basic-tutorials/non-fungible-token-drop/nft-example",
     "basic:ft-keypom": "node basic-tutorials/fungible-token-drop/ft-example",
@@ -19,7 +20,7 @@
     "trial:create-drop": "node advanced-tutorials/trial-accounts/create-trial-drop"
 
   },
-  "author": "benkurrek, mattlockyer",
+  "author": "benkurrek, mattlockyer, minqianlu",
   "license": "MIT",
   "dependencies": {
     "@keypom/core": "^1.0.0-rc.2",

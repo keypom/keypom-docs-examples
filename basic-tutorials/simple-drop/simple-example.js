@@ -1,4 +1,3 @@
-const { link } = require("fs");
 const { initKeypom, createDrop, getEnv, formatLinkdropUrl } = require("@keypom/core");
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
 const { connect, Near } = require("@near-js/wallet-account");
