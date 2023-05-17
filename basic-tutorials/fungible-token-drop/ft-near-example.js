@@ -4,9 +4,9 @@ const { Near } = require("@near-js/wallet-account");
 const { Account } = require("@near-js/accounts");
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
 const { getRecentDropId } = require("../utils/general.js")
+const { BN } = require("bn.js");
 const path = require("path");
 const homedir = require("os").homedir();
-const { BN } = require("bn.js");
 
 
 async function ftDropNear(){

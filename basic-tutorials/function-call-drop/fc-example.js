@@ -1,7 +1,7 @@
-const { parseNearAmount } = require("@near-js/utils");
 const { initKeypom, createDrop, getEnv, formatLinkdropUrl } = require("@keypom/core"); 
+const { parseNearAmount } = require("@near-js/utils");
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
-const { connect, Near } = require("@near-js/wallet-account");
+const { Near } = require("@near-js/wallet-account");
 const { Account } = require("@near-js/accounts");
 const path = require("path");
 const homedir = require("os").homedir();
