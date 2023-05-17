@@ -6,12 +6,11 @@ const { Account } = require("@near-js/accounts");
 const { connect, Near } = require("@near-js/wallet-account");
 var assert = require('assert');
 
-const keypom = require("keypom-js");
+const keypom = require("@keypom/core");
 const {
 	initKeypom,
 	getEnv,
 	createDrop,
-    parseNearAmount,
     createNFTSeries,
     formatLinkdropUrl
 } = keypom

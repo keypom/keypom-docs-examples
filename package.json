@@ -14,8 +14,10 @@
     "basic:nft-near": "node basic-tutorials/non-fungible-token-drop/nft-near-example",
     "basic:ft-near": "node basic-tutorials/fungible-token-drop/ft-near-example",
     "basic:fc-near": "node basic-tutorials/function-call-drop/fc-near-example",
+    "ticketing:init-skeleton": "yarn && cd advanced-tutorials/ticket-app-skeleton && yarn",
+    "ticketing:init-complete": "yarn && cd advanced-tutorials/ticket-app && yarn",
     "ticketing:create-drop": "node advanced-tutorials/ticket-app/utils/createTickDrop",
-    "ticketing:start": "cd advanced-tutorials/ticket-app && pnpm start && cd .. && cd ..",
+    "ticketing:start": "cd advanced-tutorials/ticket-app && pnpm start",
     "dao:create-drop": "node advanced-tutorials/dao-onboarding/createDaoDrop",
     "trial:create-drop": "node advanced-tutorials/trial-accounts/create-trial-drop"
 
