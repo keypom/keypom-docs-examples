@@ -1109,10 +1109,10 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
-"@keypom/core@1.0.0-rc.2", "@keypom/core@^1.0.0-rc.2":
-  version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@keypom/core/-/core-1.0.0-rc.2.tgz#86d093f0986344372fd69a13ec977cdfda306202"
-  integrity sha512-yhHCfKFtSl4XenTLIBlp4rLRupdSTFaLV22O4DI/GuWTRVAUuxQ9CzLAB2IZZFybTnjxjvXkfrGIesJ9fkZdnw==
+"@keypom/core@1.0.0", "@keypom/core@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@keypom/core/-/core-1.0.0.tgz#f593f751b0de563ce476d77a8231d70edf908153"
+  integrity sha512-HnS9Ai2uJwQNGKj93TX+eNoxxMeBirxNp1PE3Of2tX4ExLldNMfhqJFz2AKOe1F7hgbewy2189oTDeoo6Txx+A==
   dependencies:
     "@near-wallet-selector/core" "^8.0.3"
     bn.js "^5.2.1"
@@ -1120,13 +1120,14 @@
     near-seed-phrase "^0.2.0"
     util "^0.12.5"
 
-"@keypom/selector@^1.0.0-rc.2":
-  version "1.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/@keypom/selector/-/selector-1.0.0-rc.2.tgz#96c838e63a17765c9f9f529b511bf4fef0f22121"
-  integrity sha512-yzH3OtyERTH+1bBzGiBuKXKiWWD8QdEClu3Sv7thu5jD4MG6Vmf9gLCtTuwfnOeoGg15psxdxQ3mL/+Gnzai+w==
+"@keypom/selector@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@keypom/selector/-/selector-1.0.0.tgz#d015a554702bb459f01bf3576d15d274293baf5c"
+  integrity sha512-T13U4kDcmlsSlzn90tGv0PyxBdKrBd6yEQQ29HuqJqYkJLJXMd0QSJ8YdAjsFnfmNskedCBZgzibKWvhT7fr8w==
   dependencies:
-    "@keypom/core" "1.0.0-rc.2"
+    "@keypom/core" "1.0.0"
     bn.js "^5.2.1"
+    borsh "^0.7.0"
 
 "@lezer/common@^0.15.0", "@lezer/common@^0.15.7":
   version "0.15.12"
@@ -1210,9 +1211,9 @@
   integrity sha512-O+6Gs8UeDbyFpbSh2CPEz/UOrrdWPTBYNblZK5CxxLisYt4kGX3Sc+czffFonyjiGSq3jWLwJS/CCJc7tBr4sQ==
 
 "@near-wallet-selector/core@^8.0.3":
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-8.1.0.tgz#9886df45272cdee8466c9b751eae4d55b104e6b1"
-  integrity sha512-RqVAzVZchYiisCSSBjZjcQr+aZKpmi0tK27IiMrYoTAHUStTEN4DPOiIm4VuRXZlWI0Ciq74sIAjrsj34hlA/Q==
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-8.1.1.tgz#17277834dd7d2f05c2cb28210ae3d4a68a26a50f"
+  integrity sha512-t6ZAsbWphwyiadnWDngKTZ+5t2cJyv8967dl4OqLs0b7sOdSIRNWCshtZ66fSlyHndCuR8iHo74rBi/6sc0tiw==
   dependencies:
     rxjs "^7.8.1"
 
@@ -2449,9 +2450,9 @@ dotenv@^7.0.0:
   integrity sha512-M3NhsLbV1i6HuGzBUH8vXrtxOk+tWmzWKDMbAVSUp3Zsjm7ywFeuwrUXhmhQyRK1q5B5GGy7hcXPbj3bnfZg2g==
 
 electron-to-chromium@^1.4.284:
-  version "1.4.397"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.397.tgz#82a7e26c657538d59bb713b97ac22f97ea3a90ea"
-  integrity sha512-jwnPxhh350Q/aMatQia31KAIQdhEsYS0fFZ0BQQlN9tfvOEwShu6ZNwI4kL/xBabjcB/nTy6lSt17kNIluJZ8Q==
+  version "1.4.399"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.399.tgz#df8a63d1f572124ad8b5d846e38b0532ad7d9d54"
+  integrity sha512-+V1aNvVgoWNWYIbMOiQ1n5fRIaY4SlQ/uRlrsCjLrUwr/3OvQgiX2f5vdav4oArVT9TnttJKcPCqjwPNyZqw/A==
 
 elliptic@^6.5.3:
   version "6.5.4"
@@ -3606,9 +3607,9 @@ ts-node@^10.8.0:
     yn "3.1.1"
 
 tslib@^2.1.0, tslib@^2.4.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.0.tgz#42bfed86f5787aeb41d031866c8f402429e0fddf"
-  integrity sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg==
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.1.tgz#f2ad78c367857d54e49a0ef9def68737e1a67b21"
+  integrity sha512-KaI6gPil5m9vF7DKaoXxx1ia9fxS4qG5YveErRRVknPDXXriu5M8h48YRjB6h5ZUOKuAKlSJYb0GaDe8I39fRw==
 
 tweetnacl@1.0.3, tweetnacl@^1.0.2:
   version "1.0.3"

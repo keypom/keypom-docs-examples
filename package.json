@@ -1,6 +1,6 @@
 {
   "name": "@keypom/docs",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "Examples and Tutorials used in the Keypom Documentation",
   "main": "lib/index.js",
   "scripts": {
@@ -25,8 +25,8 @@
   "author": "benkurrek, mattlockyer, minqianlu",
   "license": "MIT",
   "dependencies": {
-    "@keypom/core": "^1.0.0-rc.2",
-    "@keypom/selector": "^1.0.0-rc.2",
+    "@keypom/core": "^1.0.0",
+    "@keypom/selector": "^1.0.0",
     "bn.js": "^5.2.1"
   },
   "ava": {
