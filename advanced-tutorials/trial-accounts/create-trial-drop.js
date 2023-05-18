@@ -1,13 +1,14 @@
+const { initKeypom, createTrialAccountDrop } = require('@keypom/core');
+const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
+const { Account } = require('@near-js/accounts');
+const { Near } = require("@near-js/wallet-account");
+const { readFileSync } = require('fs');
+
 require('dotenv').config()
 const path = require("path");
 const homedir = require("os").homedir();
-const { readFileSync } = require('fs');
-const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
-const { Account } = require('@near-js/accounts');
-const { connect, Near } = require("@near-js/wallet-account");
-const { initKeypom, createTrialAccountDrop } = require('@keypom/core');
 
-const funderAccountId = 'benjiman.testnet';
+const funderAccountId = 'minqi.testnet';
 const NETWORK_ID = 'testnet';
 async function createTrialAccount() {
 	// Initiate connection to the NEAR blockchain.
@@ -56,31 +57,22 @@ async function createTrialAccount() {
         numKeys: 1,
         contractBytes: [...readFileSync(wasmDirectory)],
 		// How much $NEAR should be made available to the trial account when it's created?
-        startingBalanceNEAR: 0.5,
+        startingBalanceNEAR: 2.5,
         callableContracts,
         callableMethods,
         maxAttachableNEARPerContract,
-        // repayAmountNEAR: 0.6,
-        // repayTo: "dennis.near",
 		// Once the trial account has spent this much $NEAR, the trial will be over.
-        trialEndFloorNEAR: 0.01
+        trialEndFloorNEAR: 1.25
     })  
 
     
 
-    const guestBookInstance = "http://localhost:1234/keypom-url#"
+    const guestBookInstance = "http://localhost:1234/trial-url#"
     const keypomContractId = "v2.keypom.testnet"
     const delimiter = "/"
     const secretKey = keys.secretKeys[0]
-    const desiredAccountId = `trial-account-${Date.now()}.testnet`
-
-    // await keypom.claimTrialAccountDrop({
-    //     secretKey,
-    //     desiredAccountId
-    // })
 
     const alphaInstance = "http://localhost:3000/#trial-url/"
-    const mnwInstance = "https://testnet-preview.mynearwallet.com/linkdrop/"
 
     console.log(`
     
