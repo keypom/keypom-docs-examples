@@ -7,7 +7,9 @@ const { connect, Near } = require("@near-js/wallet-account");
 var assert = require('assert');
 
 const keypom = require("@keypom/core");
-const { DAO_CONTRACT, DAO_BOT_CONTRACT } = require("./configurations");
+const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
+const TERA_GAS = 1000000000000;
+
 const {
 	initKeypom,
 	getEnv,
@@ -72,7 +74,7 @@ async function createDaoDrop() {
                         accountIdField: "proposal.kind.AddMemberToRole.member_id",
                         funderIdField: "funder",
                         // Attached deposit of 0.1 $NEAR for when the receiver makes this function call
-                        attachedDeposit: parseNearAmount("0.1")
+                        attachedDeposit: parseNearAmount("0.125"),
                     }
                 ],
             ]   
@@ -82,7 +84,7 @@ async function createDaoDrop() {
 
     const {contractId: KEYPOM_CONTRACT} = getEnv()
     let tickets = formatLinkdropUrl({
-        customURL: "https://testnet.mynearwallet.com/linkdrop/CONTRACT_ID/SECRET_KEY",
+        customURL: "https://wallet.near.org/linkdrop/CONTRACT_ID/SECRET_KEY",
         secretKeys: keys.secretKeys,
         contractId: KEYPOM_CONTRACT,
     })
