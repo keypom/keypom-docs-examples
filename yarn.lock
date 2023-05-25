@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@keypom/core@1.0.0", "@keypom/core@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@keypom/core/-/core-1.0.0.tgz#f593f751b0de563ce476d77a8231d70edf908153"
-  integrity sha512-HnS9Ai2uJwQNGKj93TX+eNoxxMeBirxNp1PE3Of2tX4ExLldNMfhqJFz2AKOe1F7hgbewy2189oTDeoo6Txx+A==
+"@keypom/core@1.0.1", "@keypom/core@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@keypom/core/-/core-1.0.1.tgz#422a1606765b7cac18a15e2e5c276294d13756c6"
+  integrity sha512-3AG0dhM+W5y99jjCgtxKTZ+6iFrrYOCvHwUo4fIokxracShAPKw4fEpaZn16RW4i0/ubZnSvPYZLM1dju7RWLA==
   dependencies:
     "@near-wallet-selector/core" "^8.0.3"
     bn.js "^5.2.1"
@@ -13,12 +13,12 @@
     near-seed-phrase "^0.2.0"
     util "^0.12.5"
 
-"@keypom/selector@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@keypom/selector/-/selector-1.0.0.tgz#d015a554702bb459f01bf3576d15d274293baf5c"
-  integrity sha512-T13U4kDcmlsSlzn90tGv0PyxBdKrBd6yEQQ29HuqJqYkJLJXMd0QSJ8YdAjsFnfmNskedCBZgzibKWvhT7fr8w==
+"@keypom/selector@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@keypom/selector/-/selector-1.1.0.tgz#0f744dc9155fcbd5f3bdaefd3dc914a8a6801c7b"
+  integrity sha512-Yr4vYcDZIrveGjJ6Ntqj4B3KFGp3a1F4vN0HjSrWCXXhtkk3qkK+6lw8Y56G4zczRAm4TxlhqMMt6uqgZ9n6UA==
   dependencies:
-    "@keypom/core" "1.0.0"
+    "@keypom/core" "1.0.1"
     bn.js "^5.2.1"
     borsh "^0.7.0"
 
