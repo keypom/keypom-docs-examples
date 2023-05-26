@@ -12,7 +12,7 @@ async function nftDropKeypom(){
 	const network = "testnet"
 	const CREDENTIALS_DIR = ".near-credentials";
 	const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
-	const YOUR_ACCOUNT = "keypom-docs-demo.testnet";
+	const YOUR_ACCOUNT = "minqi.testnet";
 	const NFT_TOKEN_ID = "keypom-token-" + Date.now().toString();
 	const NFT_CONTRACT = "nft.examples.testnet";
 

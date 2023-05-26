@@ -6,15 +6,9 @@ const { parseNearAmount } = require("@near-js/utils");
 const { connect, Near } = require("@near-js/wallet-account");
 var assert = require('assert');
 
-const keypom = require("keypom-js");
-const { DAO_CONTRACT, DAO_BOT_CONTRACT } = require("./configurations");
-const {
-	initKeypom,
-	getEnv,
-	createDrop,
-    parseNearAmount,
-    formatLinkdropUrl,
-} = keypom
+const keypom = require("@keypom/core");
+const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
+const TERA_GAS = 1000000000000;
 
 // Change this to your account ID
 const FUNDER_ACCOUNT_ID = "minqi.testnet";
@@ -88,7 +82,7 @@ async function createDaoDrop() {
     })
     console.log(`
     
-    Ticket Links: 
+    Auto-Registration Links: 
     
     ${tickets}
     

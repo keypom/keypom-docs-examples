@@ -74,7 +74,7 @@ async function createDaoDrop() {
                         accountIdField: "proposal.kind.AddMemberToRole.member_id",
                         funderIdField: "funder",
                         // Attached deposit of 0.1 $NEAR for when the receiver makes this function call
-                        attachedDeposit: parseNearAmount("0.125"),
+                        attachedDeposit: parseNearAmount("0.1"),
                     }
                 ],
             ]   
@@ -90,7 +90,7 @@ async function createDaoDrop() {
     })
     console.log(`
     
-    Ticket Links: 
+    Auto-Registration Links: 
     
     ${tickets}
     
