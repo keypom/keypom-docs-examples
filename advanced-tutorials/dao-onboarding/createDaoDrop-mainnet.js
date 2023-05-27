@@ -17,10 +17,11 @@ const {
     formatLinkdropUrl,
 } = keypom
 
-// Change this to your account ID
-const FUNDER_ACCOUNT_ID = "mintlu.near";
-const NETWORK_ID = "mainnet";
 async function createDaoDrop() {
+    // Change this to your account ID
+    const FUNDER_ACCOUNT_ID = "mintlu.near";
+    const NETWORK_ID = "mainnet";
+    
     // Initiate connection to the NEAR blockchain.
     const CREDENTIALS_DIR = ".near-credentials";
     const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);

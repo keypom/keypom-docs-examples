@@ -17,10 +17,11 @@ const {
     formatLinkdropUrl,
 } = keypom
 
-// Change this to your account ID
-const FUNDER_ACCOUNT_ID = "minqi.testnet";
-const NETWORK_ID = "testnet";
 async function createDaoDrop() {
+    // Change this to your account ID
+    const FUNDER_ACCOUNT_ID = "minqi.testnet";
+    const NETWORK_ID = "testnet";
+    
     // Initiate connection to the NEAR blockchain.
     const CREDENTIALS_DIR = ".near-credentials";
     const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
