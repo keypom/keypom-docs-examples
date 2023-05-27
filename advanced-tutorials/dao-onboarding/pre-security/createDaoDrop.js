@@ -14,7 +14,7 @@ async function createDaoDrop() {
     // Change this to your account ID
     const FUNDER_ACCOUNT_ID = "minqi.testnet";
     const NETWORK_ID = "testnet";
-    
+
     // Initiate connection to the NEAR blockchain.
     const CREDENTIALS_DIR = ".near-credentials";
     const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
@@ -76,7 +76,7 @@ async function createDaoDrop() {
 
 
     const {contractId: KEYPOM_CONTRACT} = getEnv()
-    let tickets = formatLinkdropUrl({
+    let links = formatLinkdropUrl({
         customURL: "https://testnet.mynearwallet.com/linkdrop/CONTRACT_ID/SECRET_KEY",
         secretKeys: keys.secretKeys,
         contractId: KEYPOM_CONTRACT,
@@ -85,7 +85,7 @@ async function createDaoDrop() {
     
     Auto-Registration Links: 
     
-    ${tickets}
+    ${links}
     
     `)
 
