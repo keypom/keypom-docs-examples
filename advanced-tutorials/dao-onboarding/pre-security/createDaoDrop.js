@@ -62,7 +62,7 @@ async function createDaoDrop() {
                         args: JSON.stringify({
                             dao_contract: DAO_CONTRACT,
                             proposal: {
-                                description: "mooooooooon",
+                                description: "Auto-Registering New Member",
                                 kind: {
                                     AddMemberToRole:{
                                         role: "new-onboardee-role"
