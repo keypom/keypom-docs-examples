@@ -3,12 +3,17 @@ const homedir = require("os").homedir();
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
 const { Account } = require("@near-js/accounts");
 const { parseNearAmount } = require("@near-js/utils");
-const { connect, Near } = require("@near-js/wallet-account");
-var assert = require('assert');
+const { Near } = require("@near-js/wallet-account");
 
 const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
-const TERA_GAS = 1000000000000;
+
+const {
+    initKeypom,
+    getEnv,
+    createDrop,
+    formatLinkdropUrl,
+} = keypom
 
 async function createDaoDrop() {
     // Change this to your account ID
@@ -19,7 +24,7 @@ async function createDaoDrop() {
     const CREDENTIALS_DIR = ".near-credentials";
     const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
 
-    let keyStore = new keyStores.UnencryptedFileSystemKeyStore(credentialsPath);  
+    let keyStore = new UnencryptedFileSystemKeyStore(credentialsPath);  
 
     let nearConfig = {
         networkId: NETWORK_ID,
@@ -30,7 +35,7 @@ async function createDaoDrop() {
         explorerUrl: `https://explorer.${NETWORK_ID}.near.org`,
     };  
 
-    let near = await connect(nearConfig);
+    let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, FUNDER_ACCOUNT_ID)
     
     // If a NEAR connection is not passed in and is not already running, initKeypom will create a new connection
