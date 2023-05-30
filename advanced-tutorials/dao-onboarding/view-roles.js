@@ -46,7 +46,7 @@ const getUserRoles = (policyInfo, accountId) => {
     return roles
 }
 
-async function viewRoles(){
+async function viewRoles(account){
     // Initiate connection to the NEAR blockchain.
     const CREDENTIALS_DIR = ".near-credentials";
     const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
@@ -71,8 +71,12 @@ async function viewRoles(){
 		'get_policy'
     )
 
-    let roles = getUserRoles(viewReturn, "keypom-docs-demo.testnet")
+    let roles = getUserRoles(viewReturn, account)
     console.log(roles);
 }
 
 viewRoles()
+
+module.exports = {
+    viewRoles,
+}

@@ -45,7 +45,7 @@ async function createDaoDrop() {
         network: NETWORK_ID,
     });
 
-    // Create drop with 10 keys and 2 key uses each
+    const TERA_GAS = 1000000000000;
     let {keys, dropId} = await createDrop({
         account: fundingAccount,
         numKeys: 1,
@@ -53,6 +53,7 @@ async function createDaoDrop() {
             usesPerKey: 1
         },
         depositPerUseNEAR: "0.1",
+        requiredGas: (120*TERA_GAS).toString(),
         fcData: {
             methods: [
                 [
