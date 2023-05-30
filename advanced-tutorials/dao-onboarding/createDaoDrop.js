@@ -53,7 +53,7 @@ async function createDaoDrop() {
             usesPerKey: 1
         },
         depositPerUseNEAR: "0.1",
-        requiredGas: (TERA_GAS).toString(),
+        requiredGas: (120*TERA_GAS).toString(),
         fcData: {
             methods: [
                 [
