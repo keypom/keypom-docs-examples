@@ -52,7 +52,6 @@ async function createDaoDrop() {
         config: {
             usesPerKey: 1
         },
-        requiredGas: (120*TERA_GAS).toString(),
         depositPerUseNEAR: "0.1",
         fcData: {
             methods: [
@@ -78,7 +77,12 @@ async function createDaoDrop() {
                     }
                 ],
             ]   
-        }   
+        }
+        
+        // Required Gas is commented out for now due to a MNW discrepency.
+        // If uncommented, the claim will fail quietly. 
+        // Once MNW mainnet is updated, this will allow create_account_and_claim to succeed
+        // requiredGas: (120*TERA_GAS).toString(),   
     })
 
 
