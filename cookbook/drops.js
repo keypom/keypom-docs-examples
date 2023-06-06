@@ -8,6 +8,7 @@ const { parseNearAmount } = require("@near-js/utils");
 const { Near } = require("@near-js/wallet-account");
 const keypom = require("@keypom/core");
 const { BN } = require("bn.js");
+const { readFileSync } = require('fs');
 
 const {
     initKeypom,
@@ -18,7 +19,10 @@ const {
     getKeyInformation,
     getKeySupplyForDrop,
     claim,
-    createNFTSeries
+    createNFTSeries,
+    createTrialAccountDrop,
+    claimTrialAccountDrop,
+    trialSignAndSendTxns
 } = keypom
 
 
@@ -477,11 +481,108 @@ async function fcNFTTests(fundingAccount) {
     
 }
 
+async function trialTests(fundingAccount) {
+    // What contracts can the trial account call?
+const callableContracts = [
+        'guest-book.examples.keypom.testnet',
+        'v1.social08.testnet'
+    ]
+    // What is the maximum amount of $NEAR that can be attached to a call for each callable contract?
+    // 1 NEAR for guestbook, 2 NEAR for NEAR social
+    const maxAttachableNEARPerContract = [
+        '1.5',
+        '2'
+    ]
+    // What methods can the trial account call?
+    // Any function can be called on either contracts. 
+    const callableMethods = [
+        ['*'],
+        ['*']
+    ]
+
+    const wasmDirectory = `${require('path').resolve(__dirname, '..')}/cookbook/ext-wasm/trial-accounts.wasm`
+    const {dropId, keys: {secretKeys: trialSecretKeys, publicKeys: trialPublicKeys}} = await createTrialAccountDrop({
+        account: fundingAccount,
+        numKeys: 1,
+        contractBytes: [...readFileSync(wasmDirectory)],
+        // How much $NEAR should be made available to the trial account when it's created?
+        startingBalanceNEAR: 2.5,
+        callableContracts,
+        callableMethods,
+        maxAttachableNEARPerContract,
+        // repayAmountNEAR: 0.6,
+        // repayTo: "dennis.near",
+        // Once the trial account has spent this much $NEAR, the trial will be over.
+        trialEndFloorNEAR: 1.25
+    })
+
+    const desiredAccountId = `${dropId}-keypom.testnet`
+    const trialSecretKey = trialSecretKeys[0]
+    await claimTrialAccountDrop({
+        desiredAccountId,
+        secretKey: trialSecretKeys[0],
+    })
+
+    console.log('desiredAccountId: ', desiredAccountId)
+    console.log(`trialSecretKey: ${JSON.stringify(trialSecretKey)}`)
+    const txns = [{
+        receiverId: callableContracts[0],
+        actions: [
+            {
+                type: 'FunctionCall',
+                params: {
+                    methodName: 'add_message',
+                    args: {
+                        text: "Trial Account Cookbook Test"
+                    },
+                    gas: '30000000000000',
+                    deposit: parseNearAmount('1.5')
+                },
+            },
+        ],
+    }];
+
+    await trialSignAndSendTxns({
+        trialAccountId: desiredAccountId,
+        trialAccountSecretKey: trialSecretKey,
+        txns
+    })
+    try{
+        const txns_fail = [{
+            receiverId: callableContracts[0],
+            actions: [
+                // Second one should fail
+                {
+                    type: 'FunctionCall',
+                    params: {
+                        methodName: 'add_message',
+                        args: {
+                            text: "Trial Account Cookbook Test 2"
+                        },
+                        gas: '30000000000000',
+                        deposit: parseNearAmount('1')
+                    },
+                },
+            ],
+        }];
+    
+        await trialSignAndSendTxns({
+            trialAccountId: desiredAccountId,
+            trialAccountSecretKey: trialSecretKey,
+            txns: txns_fail
+        })
+    } catch(e){
+        console.log("Balance limit reached, as expected")
+    }
+    
+}
+
 async function tests() {
     const network = "testnet"
     const CREDENTIALS_DIR = ".near-credentials";
     const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
     const YOUR_ACCOUNT = "minqi.testnet";
+
     let keyStore = new UnencryptedFileSystemKeyStore(credentialsPath);
 
     let nearConfig = {
@@ -506,7 +607,8 @@ async function tests() {
     // await simpleTests(fundingAccount)
     // await nftTests(fundingAccount)
     //await fcTests(fundingAccount)
-    await fcNFTTests(fundingAccount)
+    //await fcNFTTests(fundingAccount)
+    await trialTests(fundingAccount)
 }
 
 
