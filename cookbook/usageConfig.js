@@ -33,8 +33,12 @@ const {
 
 
 
+// Permissions + refunding deposit when claim is called tests
 
-async function openSaleTest(fundingAccount) {
+// Deleting drop when empty and refunding balance tests
+
+
+async function permissionsAndRefundingTests(fundingAccount) {
     const TICKET_PRICE = "1"
 
     // Create drop with a maximum of 100 keys that can be added by anyone
@@ -66,7 +70,7 @@ async function openSaleTest(fundingAccount) {
     assert(newgNumKeys == 1, "Drop should now have 1 key added by minqianlu")
 }
 
-async function AllowlistTests(fundingAccount) {
+async function dropDeletionTests(fundingAccount) {
     // Create drop with restrictive allowlist, try adding with another account, then modify allowlist and check permissions
     // check with canUserAddKeys
 
@@ -98,42 +102,6 @@ async function AllowlistTests(fundingAccount) {
     assert(!canAddKeys2, "minqi is still allowed to add")
 }
 
-async function BlocklistTests(fundingAccount) {
-    // Create drop with restrictive allowlist, try adding with another account, then modify allowlist and check permissions
-    // check with canUserAddKeys
-
-    const { keys, dropId } = await createDrop({
-        account: fundingAccount,
-        depositPerUseNEAR: 0.1,
-        config: {
-            sale: {
-                maxNumKeys: 10,
-                pricePerKeyNEAR: 1,
-                blocklist: ["benji.testnet"]
-            }
-        }
-    });
-
-    // check benji perms
-    console.log("Checking benji perms")
-    let canAddKeys = await canUserAddKeys({dropId, accountId: "benji.testnet"});
-    assert(!canAddKeys, "benji shouldn't be allowed")
-
-    // check minqi perms
-    console.log("Checking minqi perms")
-    canAddKeys = await canUserAddKeys({dropId, accountId: "minqi.testnet"});
-    assert(canAddKeys, "minqi should be allowed")
-
-    console.log("add minqi to blocklist")
-    await addToSaleBlocklist({account: fundingAccount, dropId, accountIds: ["minqi.testnet"]});
-    canAddKeys = await canUserAddKeys({dropId, accountId: "minqi.testnet"});
-    assert(!canAddKeys, "minqi should not be allowed to add keys")
-
-    console.log("remove benji")
-    await removeFromSaleBlocklist({account: fundingAccount, dropId, accountIds: ["benji.testnet"]});
-    canAddKeys = await canUserAddKeys({dropId, accountId: "benji.testnet"});
-    assert(canAddKeys, "benji should now be allowed to add")
-}
 
 
 
@@ -164,8 +132,8 @@ async function tests() {
         network
     });
 
-    // await openSaleTest(fundingAccount)
-    // await AllowlistTests(fundingAccount)
+    // await permissionsAndRefundingTests(fundingAccount)
+    // await dropDeletionTests(fundingAccount)
     await BlocklistTests(fundingAccount)
 }
 
