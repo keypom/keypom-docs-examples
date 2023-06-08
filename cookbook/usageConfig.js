@@ -28,7 +28,10 @@ const {
     addToSaleAllowlist,
     removeFromSaleAllowlist,
     addToSaleBlocklist,
-    removeFromSaleBlocklist
+    removeFromSaleBlocklist,
+    getUserBalance,
+    addToBalance,
+    withdrawBalance
 } = keypom
 
 
@@ -39,67 +42,132 @@ const {
 
 
 async function permissionsAndRefundingTests(fundingAccount) {
-    const TICKET_PRICE = "1"
-
-    // Create drop with a maximum of 100 keys that can be added by anyone
-    const { keys, dropId } = await createDrop({
+    // Only claim
+    const { keys: keys_caac, dropId: dropId_caac } = await createDrop({
         account: fundingAccount,
-        depositPerUseNEAR: 0.1,
+        numKeys: 1,
+        depositPerUseNEAR: "1",
         config: {
-            sale: {
-                maxNumKeys: 10,
-                pricePerKeyNEAR: TICKET_PRICE
+            usage:{
+                permissions: `create_account_and_claim`
             }
         }
     });
 
-    console.log("Checking drop starting key supply, should be 0")
-    let startingNumKeys = await getKeySupplyForDrop({dropId})
-    assert(startingNumKeys == 0, "Drop should start with 0 keys")
+    // Only caac
+    const { keys: keys_claim, dropId: dropId_claim } = await createDrop({
+        account: fundingAccount,
+        numKeys: 1,
+        depositPerUseNEAR: "1",
+        config: {
+            usage:{
+                permissions: `claim`
+            }
+        }
+    });
+    
+    // Refunding when claim is called
+    const { keys: keys_refund, dropId: dropId_refund } = await createDrop({
+        account: fundingAccount,
+        numKeys: 1,
+        depositPerUseNEAR: "1",
+        config: {
+            usage:{
+                refundDeposit: true
+            }
+        }
+    });
 
-    console.log("Checking permissions")
-    let canAddKeys = await canUserAddKeys({dropId, accountId: "minqianlu.testnet"});
-    assert(canAddKeys, "Not everyone is allowed to add keys")
+    
+    // CAAC ONLY DROP
+    console.log("CAAC ONLY: trying to claim")
+    try{    
+        await claim({accountId: "minqianlu.testnet", secretKey: keys_caac.secretKeys[0]})
+        let badClaimOnCAAC = await getKeyInformation({publicKey: keys_caac.publicKeys[0]})
+        assert(badClaimOnCAAC.remaining_uses == 1, "claim should not work")
+    }
+    catch{
+        console.log("Claim on CAAC only drop rightfully denied")
+    }  
 
-    console.log("Buying Key")
-    const {publicKeys} = await generateKeys({numKeys: 1});
-    await addKeys({account: fundingAccount, publicKeys, dropId, extraDepositNEAR: TICKET_PRICE})
+    console.log("CAAC ONLY: using CAAC")
+    const {publicKeys, secretKeys} = await generateKeys({numKeys: 2});
+    await claim({ 
+        secretKey: keys_caac.secretKeys[0],
+        newAccountId: `kpm-cookbook-${dropId_caac}.testnet`, 
+        newPublicKey: publicKeys[0]
+    })
+    let goodCAADonCAAC = await getKeySupplyForDrop({dropId: dropId_caac})
+    assert(goodCAADonCAAC == 0, "CAAC has failed unexpectedly")
+    
 
-    console.log("Checking drop keys again")
-    let newgNumKeys = await getKeySupplyForDrop({dropId})
-    assert(newgNumKeys == 1, "Drop should now have 1 key added by minqianlu")
+    
+    // CLAIM ONLY DROP
+    console.log("CLAIM ONLY: trying to use CAAC")
+    try{
+        await claim({ 
+            secretKey: keys_claim.secretKeys[0],
+            newAccountId: `kpm-cookbook-${dropId_claim}.testnet`, 
+            newPublicKey: publicKeys[1]
+        })
+        let badCAADonClaim = await getKeyInformation({publicKey: keys_claim.publicKeys[0]})
+        assert(badCAADonClaim.remaining_uses == 1, "CAAC should not work")
+    }catch{
+        console.log("CAAC on claim only drop rightfully denied")
+    }
+
+    console.log("CLAIM ONLY: trying to use claim")
+    await claim({accountId: "minqianlu.testnet", secretKey: keys_claim.secretKeys[0]})
+    let  goodClaimOnClaim= await getKeySupplyForDrop({dropId: dropId_claim})
+    assert(goodClaimOnClaim == 0, "Claim has failed unexpectedly")
+
+
+    // REFUNDING
+    console.log("Checking refunds")
+    const unClaimedFunderBal = await getUserBalance({accountId: "minqi.testnet",})
+    await claim({accountId: "minqianlu.testnet", secretKey: keys_refund.secretKeys[0]})
+    const claimedFunderBal = await getUserBalance({accountId: "minqi.testnet",})
+    console.log(`Funder Bal before: ${unClaimedFunderBal}`)
+    console.log(`Funder Bal claimed: ${claimedFunderBal}`)
+    assert(claimedFunderBal > unClaimedFunderBal, "funder balance was not changed")
 }
 
 async function dropDeletionTests(fundingAccount) {
-    // Create drop with restrictive allowlist, try adding with another account, then modify allowlist and check permissions
-    // check with canUserAddKeys
+    // Quick balance test
+    await addToBalance({
+        account: fundingAccount, 
+        amountNear: "5"
+    });
+    let bal1 = await getUserBalance({accountId: "mintlu.testnet"})
+    await withdrawBalance({
+        account: fundingAccount
+    })
+    let bal2 = await getUserBalance({accountId: "mintlu.testnet"})
+    assert(bal1 - bal2 == parseNearAmount("5"), "balance funky")
 
+    // Begin drop deletion tests
+    await addToBalance({account: fundingAccount, amountNear: "15"});
+
+    // create a drop, now balance is roughly 5 $NEAR
     const { keys, dropId } = await createDrop({
         account: fundingAccount,
-        depositPerUseNEAR: 0.1,
+        numKeys: 1,
+        depositPerUseNEAR: "1",
         config: {
-            sale: {
-                maxNumKeys: 10,
-                pricePerKeyNEAR: 1,
-                allowlist: ["minqi.testnet"]
+            usage:{
+                autoDeleteDrop: true,
+                autoWithdraw: true
             }
         }
     });
+    let funderBal1 = await getUserBalance({accountId: "mintlu.testnet"})
+    assert(funderBal1 != 0, "Funder balance somehow 0")
 
-    // check benji perms
-    console.log("Checking benji perms")
-    let canAddKeys = await canUserAddKeys({dropId, accountId: "benji.testnet"});
-    assert(!canAddKeys, "benji shouldn't be allowed")
 
-    console.log("add benji")
-    await addToSaleAllowlist({account: fundingAccount, dropId, accountIds: ["benji.testnet"]});
-    canAddKeys = await canUserAddKeys({dropId, accountId: "benji.testnet"});
-    assert(canAddKeys, "benji still cannot add keys")
-
-    console.log("remove minqi")
-    await removeFromSaleAllowlist({account: fundingAccount, dropId, accountIds: ["minqi.testnet"]});
-    let canAddKeys2 = await canUserAddKeys({dropId, accountId: "minqi.testnet"});
-    assert(!canAddKeys2, "minqi is still allowed to add")
+    console.log("Now claiming, funder balance should now be 0 after this")
+    await claim({accountId: "minqianlu.testnet", secretKey: keys.secretKeys[0]})
+    let funderBal2 = await getUserBalance({accountId: "mintlu.testnet"})
+    assert(funderBal2 == 0, "Funder balance was not successfully withdrawn")
 }
 
 
@@ -124,6 +192,7 @@ async function tests() {
 
     let near = new Near(nearConfig);
     const fundingAccount = await near.account(YOUR_ACCOUNT);
+    const fundingAccountNEW = await near.account("mintlu.testnet");
 
     // If a NEAR connection is not passed in and is not already running, initKeypom will create a new connection
     // Here we are connecting to the testnet network
@@ -133,8 +202,8 @@ async function tests() {
     });
 
     // await permissionsAndRefundingTests(fundingAccount)
-    // await dropDeletionTests(fundingAccount)
-    await BlocklistTests(fundingAccount)
+    await dropDeletionTests(fundingAccountNEW)
+    // await BlocklistTests(fundingAccount)
 }
 
 
