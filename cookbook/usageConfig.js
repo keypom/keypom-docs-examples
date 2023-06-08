@@ -31,7 +31,9 @@ const {
     removeFromSaleBlocklist,
     getUserBalance,
     addToBalance,
-    withdrawBalance
+    withdrawBalance,
+    getEnv,
+    formatLinkdropUrl
 } = keypom
 
 
@@ -170,6 +172,49 @@ async function dropDeletionTests(fundingAccount) {
     assert(funderBal2 == 0, "Funder balance was not successfully withdrawn")
 }
 
+async function accountCreationTests(fundingAccount) {
+
+    // Creating FC drop that injects accountId into function call arguments
+    let {keys, dropId} = await createDrop({
+        account: fundingAccount,
+        numKeys: 1,
+        config: {
+            usage:{
+                permissions: `create_account_and_claim`,
+                accountCreationFields: {
+                    funderIdField: "funder_id"
+                }
+
+            },
+            dropRoot: "mint-brigade.testnet"
+        },
+        depositPerUseNEAR: "1",
+    })
+
+     // CAAC ONLY DROP
+     console.log("CAAC ONLY: trying to claim")
+     try{    
+         await claim({accountId: "minqianlu.testnet", secretKey: keys.secretKeys[0]})
+         let badClaimOnCAAC = await getKeyInformation({publicKey: keys.publicKeys[0]})
+         assert(badClaimOnCAAC.remaining_uses == 1, "claim should not work")
+     }
+     catch{
+         console.log("Claim on CAAC only drop rightfully denied")
+     }  
+ 
+     console.log("CAAC ONLY: using CAAC")
+     const {publicKeys, secretKeys} = await generateKeys({numKeys: 2});
+     await claim({ 
+         secretKey: keys.secretKeys[0],
+         newAccountId: `floodgates.mint-brigade.testnet`, 
+         newPublicKey: publicKeys[0]
+     })
+     let goodCAADonCAAC = await getKeySupplyForDrop({dropId: dropId})
+     assert(goodCAADonCAAC == 0, "CAAC has failed unexpectedly")
+    
+}
+
+
 
 
 
@@ -202,8 +247,8 @@ async function tests() {
     });
 
     // await permissionsAndRefundingTests(fundingAccount)
-    await dropDeletionTests(fundingAccountNEW)
-    // await BlocklistTests(fundingAccount)
+    // await dropDeletionTests(fundingAccountNEW)
+    await accountCreationTests(fundingAccount)
 }
 
 
