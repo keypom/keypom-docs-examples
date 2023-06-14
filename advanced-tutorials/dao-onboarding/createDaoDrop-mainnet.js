@@ -52,13 +52,13 @@ async function createDaoDrop() {
         config: {
             usesPerKey: 1
         },
-        requiredGas: (120*TERA_GAS).toString(),
+        // requiredGas: (120*TERA_GAS).toString(),
         depositPerUseNEAR: "0.1",
         fcData: {
             methods: [
                 [
                     {
-                        receiverId: DAO_BOT_CONTRACT_MAINNET,
+                        receiverId: "test-dao-bot.near",
                         methodName: "new_auto_registration",
                         args: JSON.stringify({
                             dao_contract: DAO_CONTRACT_MAINNET,
@@ -69,7 +69,8 @@ async function createDaoDrop() {
                                         role: "new-onboardee-role"
                                     }
                                 }
-                            }
+                            },
+                            human_only: false
                         }),
                         accountIdField: "proposal.kind.AddMemberToRole.member_id",
                         funderIdField: "funder",
