@@ -2,4 +2,4 @@ node_modules
 package-lock.json
 advanced-tutorials/ticket-app/.parcel-cache
 .parcel-cache
-
+advanced-tutorials/ticket-app/utils/temp.js
