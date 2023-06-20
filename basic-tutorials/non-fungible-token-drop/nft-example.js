@@ -12,7 +12,7 @@ async function nftDropKeypom(){
 	const network = "testnet"
 	const CREDENTIALS_DIR = ".near-credentials";
 	const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
-	const YOUR_ACCOUNT = "minqi.testnet";
+	const YOUR_ACCOUNT = "minqi-tests.testnet";
 	const NFT_TOKEN_ID = "keypom-token-" + Date.now().toString();
 	const NFT_CONTRACT = "nft.examples.testnet";
 
@@ -43,9 +43,8 @@ async function nftDropKeypom(){
 			},
 			token_id: NFT_TOKEN_ID,
 		},
-		gas: "300000000000000",
 		// Cost to cover storage of NFT
-		attachedDeposit: parseNearAmount("0.1")
+		attachedDeposit: parseNearAmount("1")
 	});
 
 	// Initiate Keypom using existing NEAR testnet connection

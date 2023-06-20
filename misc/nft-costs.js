@@ -1,4 +1,4 @@
-const { initKeypom, createDrop, getEnv, formatLinkdropUrl, claim, withdrawBalance, addToBalance, getUserBalance, generateKeys, addKeys } = require("@keypom/core");
+const { initKeypom, createDrop, getEnv, formatLinkdropUrl, claim, withdrawBalance, addToBalance, getUserBalance, generateKeys, addKeys, nftTransferCall } = require("@keypom/core");
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
 const { connect, Near } = require("@near-js/wallet-account");
 const { assert } = require("console");
@@ -7,10 +7,12 @@ const { BN } = require("bn.js");
 const path = require("path");
 const homedir = require("os").homedir();
 const TERA_GAS = 1000000000000;
+const NFT_CONTRACT = "nft.examples.testnet";
+
 
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const csvWriter = createCsvWriter({
-  path: 'misc/results/simple-costs.csv',
+  path: 'misc/results/nft-costs.csv',
   header: [
     {id: 'numKeys', title: 'Number of Keys'},
     {id: 'DropCost', title: 'Drop Creation Cost'},
@@ -19,11 +21,59 @@ const csvWriter = createCsvWriter({
   ]
 });
 
+async function nftSetup(fundingAccount, numKeys){
+    let token_ids = []
+    for(var i = 0; i < numKeys; i++){
+        try{
+            let tokenId = `ar-${numKeys}-keypom-test-token-${i}`;
+            // Mint 1 NFT for the funder from the NFT contract outlined in the NFT_DATA
+	        await fundingAccount.functionCall({
+	        	contractId: NFT_CONTRACT, 
+	        	methodName: 'nft_mint', 
+	        	args: {
+	        		receiver_id: fundingAccount.accountId,
+	        		metadata: {
+	        		    title: "My First Keypom NFT",
+	        		    description: "NFT from my first NFT Drop!",
+	        		    media: "https://bafybeiftczwrtyr3k7a2k4vutd3amkwsmaqyhrdzlhvpt33dyjivufqusq.ipfs.dweb.link/goteam-gif.gif",
+	        		},
+	        		token_id: tokenId,
+	        	},
+	        	// Cost to cover storage of NFT
+                attachedDeposit: parseNearAmount("0.00839")
+	        });
+            await fundingAccount.functionCall({
+	        	contractId: NFT_CONTRACT, 
+	        	methodName: 'nft_approve', 
+	        	args: {
+	        		account_id: "v2.keypom.testnet",
+	        		token_id: tokenId,
+	        	},
+                // NFT approve requires 1 yocto 
+                attachedDeposit: parseNearAmount("0.00290")
 
-async function DropCreate(fundingAccount, numKeys, startBal){
+            });
+            token_ids.push(tokenId)
+        }
+        catch(e){
+            console.log(`ERROR HAS OCCURED ${e}`)
+        }   
+    }
+    return token_ids
+}
+
+async function DropCreate(fundingAccount, numKeys, startBal, token_ids){
 	const {dropId} = await createDrop({
 	    account: fundingAccount,
 	    depositPerUseNEAR: "0.1",
+        nftData: {
+            // NFT Contract Id that the tokens will come from
+		    contractId: NFT_CONTRACT,
+		    // Who will be sending the NFTs to the Keypom contract
+		    senderId: fundingAccount.accountId,
+		    // List of tokenIDs
+		    tokenIds: []
+        },
         config: {
             usage:{
                 refundDeposit: true,
@@ -32,6 +82,24 @@ async function DropCreate(fundingAccount, numKeys, startBal){
         },
         useBalance: true
 	});
+
+    console.log(`ALL TOKENS: ${token_ids}`)
+
+    let nftsAdded = 0;
+    let count = 0;
+    while (nftsAdded < token_ids.length) {
+        const nftsToAdd = Math.min(5, token_ids.length - nftsAdded);
+        console.log(`I AM HERE, TOKENS ARE ${token_ids.slice(count, count + 5)}`)
+        // FOR SOME REASON, THIS IS DOUBLE TRANSFERRING THE SAME NFT
+        await nftTransferCall({
+            account: fundingAccount,
+            contractId: NFT_CONTRACT,
+            tokenIds: token_ids.slice(count, count + 5),
+            dropId
+        });
+        nftsAdded += nftsToAdd;
+        count += 5;
+    } 
 
     const postDropBal = await getUserBalance({
         accountId: fundingAccount.accountId,
@@ -154,11 +222,12 @@ async function main(){
     for(var i = 0; i < 2; i++){
         let NUM_KEYS = 10**i;
         console.log(`${NUM_KEYS} KEY TEST`)
+        let token_ids = await nftSetup(fundingAccount, NUM_KEYS);
 
         const startBal = 0.5*NUM_KEYS;
         await resetBal(fundingAccount, startBal)
 
-        let {allSecretKeys, dropCost, keyCost} = await DropCreate(fundingAccount, NUM_KEYS, startBal)
+        let {allSecretKeys, dropCost, keyCost} = await DropCreate(fundingAccount, NUM_KEYS, startBal, token_ids)
         let {costs: creationCost, currentBal: postCreationBal} = await getCosts(fundingAccount, startBal)
         await claimDrop(fundingAccount, allSecretKeys)
         let {costs: claimCost, currentBal: postClaimBal} = await getCosts(fundingAccount, formatNearAmount(postCreationBal.toString()))
