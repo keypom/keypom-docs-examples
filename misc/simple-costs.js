@@ -2,12 +2,21 @@ const { initKeypom, createDrop, getEnv, formatLinkdropUrl, claim, withdrawBalanc
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
 const { connect, Near } = require("@near-js/wallet-account");
 const { assert } = require("console");
-const { parseNearAmount } = require("@near-js/utils");
-
-
+const { parseNearAmount, formatNearAmount } = require("@near-js/utils");
+const { BN } = require("bn.js");
 const path = require("path");
 const homedir = require("os").homedir();
 const TERA_GAS = 1000000000000;
+
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
+const csvWriter = createCsvWriter({
+  path: 'misc/results/simple-costs.csv',
+  header: [
+    {id: 'numKeys', title: 'Number of Keys'},
+    {id: 'CreationCost', title: 'Upfront Cost'},
+    {id: 'ClaimCost', title: 'Depleted Drop Cost'},
+  ]
+});
 
 
 async function DropCreate(fundingAccount, numKeys){
@@ -20,7 +29,8 @@ async function DropCreate(fundingAccount, numKeys){
                 refundDeposit: true,
                 autoDeleteDrop: true
             }
-        }
+        },
+        useBalance: true
 	});
 	pubKeys = keys.publicKeys
 
@@ -28,24 +38,21 @@ async function DropCreate(fundingAccount, numKeys){
 }
 
 async function resetBal(fundingAccount, amount){
+    // Set balance to 0
     await withdrawBalance({
         account: fundingAccount
     })
-
-    // Query for the drop information for a specific drop
     const emptyBal = await getUserBalance({
         accountId: fundingAccount.accountId,
     })
     console.log(`empty bal ${emptyBal}`)
-
     assert(emptyBal == 0, "Withdrawing balance failed")
 
+    // Add specified amount to balance
     await addToBalance({
         account: fundingAccount, 
         amountNear: amount
     });
-
-    // Query for the drop information for a specific drop
     const newBal = await getUserBalance({
         accountId: fundingAccount.accountId,
     })
@@ -59,7 +66,9 @@ async function getCosts(fundingAccount, amount){
         accountId: fundingAccount.accountId,
     })
 
-    let costs = parseNearAmount(amount.toString()) - currentBal
+    // let costs = parseNearAmount(amount.toString()) - currentBal
+    let costs = (new BN(parseNearAmount(amount.toString())).sub(new BN(currentBal)))
+    // flag and handle negagtive BNs better
     console.log(`ref balance: ${parseNearAmount(amount.toString())}`)
     console.log(`current bal: ${currentBal}`)
     console.log(`getting costs: ${costs}`)
@@ -112,20 +121,30 @@ async function main(){
       ];
 
 
-    // 10 keys
-    console.log("10 key test")
-    const startBal_10keys = 5;
-    await resetBal(fundingAccount, startBal_10keys)
-    let keys = await DropCreate(fundingAccount, 10)
-    let {costs: creationCost, currentBal: postCreationBal} = await getCosts(fundingAccount, startBal_10keys)
-    // await claimDrop(fundingAccount, keys)
-    // let {costs: claimCost, currentBal: postClaimBal} = await getCosts(fundingAccount, postCreationBal)
-    csvData.push({
-        numKeys: 10,
-        CreationCost: creationCost,
-        ClaimCost: 0
-    })
+    for(var i = 0; i < 3; i++){
+        let NUM_KEYS = 10**i;
+        console.log(`${NUM_KEYS} KEY TEST`)
+
+        const startBal = 0.5*NUM_KEYS;
+        await resetBal(fundingAccount, startBal)
+
+        let keys = await DropCreate(fundingAccount, NUM_KEYS)
+        let {costs: creationCost, currentBal: postCreationBal} = await getCosts(fundingAccount, startBal)
+        await claimDrop(fundingAccount, keys)
+        let {costs: claimCost, currentBal: postClaimBal} = await getCosts(fundingAccount, formatNearAmount(postCreationBal.toString()))
+        
+        csvData.push({
+            numKeys: NUM_KEYS,
+            CreationCost: parseFloat(formatNearAmount(creationCost.toString())),
+            ClaimCost: claimCost.toString()/"1000000000000000000000000"
+        })
+        console.log(`${NUM_KEYS} KEY TEST COMPLETE`)
+    }
+    console.log("ALL TESTS COMPLETED")
     console.log(csvData)
+    csvWriter
+        .writeRecords(csvData)
+        .then(()=> console.log('The CSV file was written successfully'))
 }
 
 main()
