@@ -18,6 +18,7 @@
     "ticketing:init-complete": "yarn && cd advanced-tutorials/ticket-app && yarn",
     "ticketing:create-drop": "node advanced-tutorials/ticket-app/utils/createTickDrop",
     "ticketing:start": "cd advanced-tutorials/ticket-app && pnpm start",
+    "ticketing:main:start": "cd advanced-tutorials/ticket-app-mainnet && pnpm start",
     "dao:create-drop": "node advanced-tutorials/dao-onboarding/createDaoDrop",
     "dao:create-drop-mainnet": "node advanced-tutorials/dao-onboarding/createDaoDrop-mainnet",
     "trial:create-drop": "node advanced-tutorials/trial-accounts/create-trial-drop"
