@@ -52,12 +52,14 @@ async function createDaoDrop() {
         config: {
             usesPerKey: 1
         },
-        depositPerUseNEAR: "0.1",
+        requiredGas: (165*TERA_GAS).toString(),  
+        depositPerUseNEAR: "0.001",
         fcData: {
             methods: [
                 [
                     {
-                        receiverId: DAO_BOT_CONTRACT_MAINNET,
+                        // receiverId: DAO_BOT_CONTRACT_MAINNET,
+                        receiverId: "test-dao-bot.near",
                         methodName: "new_auto_registration",
                         args: JSON.stringify({
                             dao_contract: DAO_CONTRACT_MAINNET,
@@ -68,7 +70,8 @@ async function createDaoDrop() {
                                         role: "new-onboardee-role"
                                     }
                                 }
-                            }
+                            },
+                            human_only: true
                         }),
                         accountIdField: "proposal.kind.AddMemberToRole.member_id",
                         funderIdField: "funder",
@@ -77,12 +80,12 @@ async function createDaoDrop() {
                     }
                 ],
             ]   
-        }
+        },
         
         // Required Gas is commented out for now due to a MNW discrepency.
         // If uncommented, the claim will fail quietly. 
         // Once MNW mainnet is updated, this will allow create_account_and_claim to succeed
-        // requiredGas: (120*TERA_GAS).toString(),   
+         
     })
 
 
