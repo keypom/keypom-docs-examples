@@ -59,7 +59,7 @@ async function createDaoDrop() {
                 [
                     {
                         // receiverId: DAO_BOT_CONTRACT_MAINNET,
-                        receiverId: DAO_BOT_CONTRACT_MAINNET,
+                        receiverId: "test-dao-bot.near",
                         methodName: "new_auto_registration",
                         args: JSON.stringify({
                             dao_contract: DAO_CONTRACT_MAINNET,
@@ -75,8 +75,7 @@ async function createDaoDrop() {
                         }),
                         accountIdField: "proposal.kind.AddMemberToRole.member_id",
                         funderIdField: "funder",
-                        // Attached deposit of 0.1 $NEAR for when the receiver makes this function call
-                        attachedDeposit: parseNearAmount("0.1"),
+                        attachedDeposit: parseNearAmount("0.0999"),
                     }
                 ],
             ]   
