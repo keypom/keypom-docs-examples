@@ -44,8 +44,6 @@ async function createTickDrop() {
         network: NETWORK_ID,
     });
 
-    let ROOT = NETWORK_ID == "mainnet" ? "near" : "testnet"
-
     // Create drop with 10 keys and 2 key uses each
     let {keys, dropId} = await createDrop({
         account: fundingAccount,
@@ -62,7 +60,7 @@ async function createTickDrop() {
                 null,
                 [
                     {
-                        receiverId: `nft-v2.keypom.${ROOT}`,
+                        receiverId: `nft-v2.keypom.${NETWORK_ID == "mainnet" ? "near" : "testnet"}`,
                         methodName: "nft_mint",
                         args: "",
                         dropIdField: "mint_id",

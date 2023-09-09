@@ -59,7 +59,7 @@ async function createTickDrop() {
                 null,
                 [
                     {
-                        receiverId: `nft-v2.keypom.${NETWORK_ID}`,
+                        receiverId: `nft-v2.keypom.${NETWORK_ID == "mainnet" ? "near" : "testnet"}`,
                         methodName: "nft_mint",
                         args: "",
                         dropIdField: "mint_id",
@@ -68,7 +68,8 @@ async function createTickDrop() {
                     }
                 ],
             ]   
-        }   
+        },
+        useBalance: true
     })
 
     await createNFTSeries({
