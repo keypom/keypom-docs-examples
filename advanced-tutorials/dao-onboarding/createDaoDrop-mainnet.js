@@ -75,11 +75,12 @@ async function createDaoDrop() {
                         }),
                         accountIdField: "proposal.kind.AddMemberToRole.member_id",
                         funderIdField: "funder",
-                        attachedDeposit: parseNearAmount("0.0999"),
+                        attachedDeposit: parseNearAmount("0.1"),
                     }
                 ],
             ]   
         },
+        useBalance: true
     })
 
 
