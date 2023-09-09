@@ -44,6 +44,8 @@ async function createTickDrop() {
         network: NETWORK_ID,
     });
 
+    let ROOT = NETWORK_ID == "mainnet" ? "near" : "testnet"
+
     // Create drop with 10 keys and 2 key uses each
     let {keys, dropId} = await createDrop({
         account: fundingAccount,
@@ -54,34 +56,35 @@ async function createTickDrop() {
         depositPerUseNEAR: "0.01",
         basePassword: "event-password",
         passwordProtectedUses: [1],
+        useBalance: true,
         fcData: {
             methods: [
                 null,
-                null
-                // [
-                //     {
-                //         receiverId: `nft-v2.keypom.${NETWORK_ID}`,
-                //         methodName: "nft_mint",
-                //         args: "",
-                //         dropIdField: "mint_id",
-                //         accountIdField: "receiver_id",
-                //         attachedDeposit: parseNearAmount("0.1")
-                //     }
-                // ],
+                [
+                    {
+                        receiverId: `nft-v2.keypom.${ROOT}`,
+                        methodName: "nft_mint",
+                        args: "",
+                        dropIdField: "mint_id",
+                        accountIdField: "receiver_id",
+                        attachedDeposit: parseNearAmount("0.1")
+                    }
+                ],
             ]   
-        }   
+        }, 
     })
 
-    // await createNFTSeries({
-    //     account: fundingAccount,
-    //     dropId,
-    //     metadata: {
-    //         title: "Moon NFT Ticket!",
-    //         description: "A cool NFT POAP for the best dog in the world.",
-    //         media: "bafybeibwhlfvlytmttpcofahkukuzh24ckcamklia3vimzd4vkgnydy7nq",
-    //         copies: 30
-    //     }
-    // }); 
+    await createNFTSeries({
+        account: fundingAccount,
+        dropId,
+        metadata: {
+            title: "Moon NFT Ticket!",
+            description: "A cool NFT POAP for the best dog in the world.",
+            media: "bafybeibwhlfvlytmttpcofahkukuzh24ckcamklia3vimzd4vkgnydy7nq",
+            copies: 1
+        },
+        useBalance: true
+    }); 
 
     const {contractId: KEYPOM_CONTRACT} = getEnv()
     let tickets = formatLinkdropUrl({
