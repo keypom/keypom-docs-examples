@@ -16,10 +16,10 @@ const {
     formatLinkdropUrl,
 } = keypom
 
-async function createDaoDrop() {
+async function countTickets() {
     // Change this to your account ID
-    const FUNDER_ACCOUNT_ID = "nearapac.near";
-    const NETWORK_ID = "mainnet";
+    const FUNDER_ACCOUNT_ID = "minqi.testnet";
+    const NETWORK_ID = "testnet";
 
     // Initiate connection to the NEAR blockchain.
     const CREDENTIALS_DIR = ".near-credentials";
@@ -46,56 +46,42 @@ async function createDaoDrop() {
         network: NETWORK_ID,
     });
 
+    // Use last drop as reference
     const drops = await getDrops({
         accountId: FUNDER_ACCOUNT_ID,
         start: 0,
         limit: 300,
         withKeys: false
-    })    
-
-    console.log(drops.length)
-    let ticketDrops = []
-    for(let i = 0; i < drops.length; i++){
-        if(drops[i].fc.methods[0] == null && drops[i].fc.methods[1][0].receiver_id == "nft-v2.keypom.mainnet"){
-            ticketDrops.push(drops[i].drop_id)
-        }
-    }
-
+    }) 
+    let drop = drops[drops.length-1]
+    let dropId = drop.drop_id
+    let totalTickets = drop.next_key_id
+    
+    // Counters
     let ticketsScanned = 0
     let unusedTickets = 0
     let fullyUsedTickets = 0
-    for(let i = 0; i < ticketDrops.length; i++){
-        console.log(`Analyzing drop number ${i}: ${ticketDrops[i]}`)
-        const keys = await getKeysForDrop({
-            dropId: ticketDrops[i]
-        })
-        console.log(`Drop ${ticketDrops[i]} returned ${keys.length} keys`)
-        let localScanned = 0
-        let localUnused = 0
-        let localFullyUsed = 0
-        for(let j = 0; j < keys.length; j++){
-            if(keys[j].remaining_uses == 1){
-                ticketsScanned++
-                localScanned++
-            }else if(keys[j].remaining_uses == 2){
-                unusedTickets++
-                localUnused++
-            }
-        }
-        // ASSUME EACH DROP HAS 50 KEYS, ANY LESS WILL BE CONSIDERED FULLY SCANNED
-        if(keys.length < 50){
-            localFullyUsed += 50-keys.length
-            fullyUsedTickets += 50-keys.length
-        }
 
-        console.log(`FOR DROP ID: ${ticketDrops[i]}, ${localScanned} tickets were scanned, ${localFullyUsed} tickets were fully used and  ${localUnused} tickets were unused`)
-        console.log(`TOTAL IS NOW: ${ticketsScanned} scanned, ${fullyUsedTickets} fully used, and ${unusedTickets} unused`)
+    const keys = await getKeysForDrop({
+        dropId
+    })
+
+    for(let i = 0; i < keys.length; i++){
+        if(keys[i].remaining_uses == 1){
+            ticketsScanned++
+        }else if(keys[i].remaining_uses == 2){
+            unusedTickets++
+        }
     }
-
+    // ASSUME EACH DROP HAS 50 KEYS, ANY LESS WILL BE CONSIDERED FULLY SCANNED
+    if(keys.length < totalTickets){
+        fullyUsedTickets += totalTickets-keys.length
+    }
+    console.log(`Drop ID ${dropId} Analytics: ${ticketsScanned} scanned, ${fullyUsedTickets} fully used, and ${unusedTickets} unused`)
 }
 
-createDaoDrop()
+countTickets()
 
 module.exports = {
-    createDaoDrop,
+    countTickets,
 }

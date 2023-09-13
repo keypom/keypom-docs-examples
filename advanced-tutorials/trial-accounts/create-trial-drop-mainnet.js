@@ -59,7 +59,8 @@ async function createTrialAccount() {
         callableMethods,
         maxAttachableNEARPerContract,
 		// Once the trial account has spent this much $NEAR, the trial will be over.
-        trialEndFloorNEAR: 0.05
+        trialEndFloorNEAR: 0.05,
+        useBalance: true
     })  
 
     
