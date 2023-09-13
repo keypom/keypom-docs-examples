@@ -17,27 +17,11 @@ const {
 } = keypom
 
 async function countTickets() {
-    // Change this to your account ID
-    const FUNDER_ACCOUNT_ID = "minqi.testnet";
-    const NETWORK_ID = "testnet";
+   // Connect to NEAR
 
-    // Initiate connection to the NEAR blockchain.
-    const CREDENTIALS_DIR = ".near-credentials";
-    const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
+   // Get drop and keys
 
-    let keyStore = new UnencryptedFileSystemKeyStore(credentialsPath);  
-
-    let nearConfig = {
-        networkId: NETWORK_ID,
-        keyStore: keyStore,
-        nodeUrl: `https://rpc.${NETWORK_ID}.near.org`,
-        walletUrl: `https://wallet.${NETWORK_ID}.near.org`,
-        helperUrl: `https://helper.${NETWORK_ID}.near.org`,
-        explorerUrl: `https://explorer.${NETWORK_ID}.near.org`,
-    };  
-
-    let near = new Near(nearConfig);
-    const fundingAccount = new Account(near.connection, FUNDER_ACCOUNT_ID)
+   // Compile data
 }
 
 countTickets()
