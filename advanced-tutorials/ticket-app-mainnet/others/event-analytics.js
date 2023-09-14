@@ -11,6 +11,7 @@ const {
 	initKeypom,
     getDrops,
     getKeysForDrop,
+    getDropInformation,
 	getEnv,
 	createDrop,
     formatLinkdropUrl,
@@ -18,7 +19,6 @@ const {
 
 async function countTickets() {
     // Change this to your account ID
-    const FUNDER_ACCOUNT_ID = "mintlu.near";
     const NETWORK_ID = "mainnet";
 
     // Initiate connection to the NEAR blockchain.
@@ -37,7 +37,6 @@ async function countTickets() {
     };  
 
     let near = new Near(nearConfig);
-    const fundingAccount = new Account(near.connection, FUNDER_ACCOUNT_ID)
     
     // If a NEAR connection is not passed in and is not already running, initKeypom will create a new connection
     // Here we are connecting to the testnet network
@@ -46,25 +45,20 @@ async function countTickets() {
         network: NETWORK_ID,
     });
 
-    // Use last drop as reference
-    const drops = await getDrops({
-        accountId: FUNDER_ACCOUNT_ID,
-        start: 0,
-        limit: 300,
-        withKeys: false
-    }) 
-    let drop = drops[drops.length-1]
-    let dropId = drop.drop_id
+    let dropId = "1692598652102"
+
+    const drop = await getDropInformation({
+        dropId,
+        withKeys: true
+    })
+
     let totalTickets = drop.next_key_id
+    let keys = drop.keys
     
     // Counters
     let ticketsScanned = 0
     let unusedTickets = 0
     let fullyUsedTickets = 0
-
-    const keys = await getKeysForDrop({
-        dropId
-    })
 
     for(let i = 0; i < keys.length; i++){
         if(keys[i].remaining_uses == 1){
