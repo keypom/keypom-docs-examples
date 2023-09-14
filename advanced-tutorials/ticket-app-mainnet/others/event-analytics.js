@@ -66,7 +66,7 @@ async function countTickets() {
             unusedTickets++
         }
     }
-    // ASSUME EACH DROP HAS 50 KEYS, ANY LESS WILL BE CONSIDERED FULLY SCANNED
+
     if(keys.length < totalTickets){
         fullyUsedTickets += totalTickets-keys.length
     }
