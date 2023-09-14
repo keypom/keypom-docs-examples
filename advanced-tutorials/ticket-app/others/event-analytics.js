@@ -18,7 +18,6 @@ const {
 } = keypom
 
 async function countTickets() {
-    // Change this to your account ID
     const NETWORK_ID = "testnet";
 
     // Initiate connection to the NEAR blockchain.
