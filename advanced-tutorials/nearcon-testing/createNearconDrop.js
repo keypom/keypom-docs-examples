@@ -10,7 +10,7 @@ const { writeFile, mkdir, readFile } = require('fs/promises');
 
 const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
-
+const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
 const {
     initKeypom,
     getEnv,
@@ -33,7 +33,7 @@ async function createNearconDrop(fundingAccount) {
 
 	try {
 		await fundingAccount.functionCall({
-			contractId: "testing-nearcon-keypom.testnet", 
+			contractId: KEYPOM_CONTRACT, 
 			methodName: 'create_drop', 
 			args: {
 				drop_id,
@@ -49,7 +49,7 @@ async function createNearconDrop(fundingAccount) {
 		console.log('error creating drop: ', e);
 	}
     var result = await fundingAccount.viewFunction({
-        contractId: "testing-nearcon-keypom.testnet",
+        contractId: KEYPOM_CONTRACT,
         methodName: "get_drop_information",
         args: {
             drop_id
@@ -104,7 +104,7 @@ async function addKeys (fundingAccount, originalTicketOwner, numKeys, numOwners,
 
     try {
 		await fundingAccount.functionCall({
-			contractId: "testing-nearcon-keypom.testnet", 
+			contractId: KEYPOM_CONTRACT, 
 			methodName: 'add_keys', 
 			args: {
 				drop_id: dropId,
@@ -147,7 +147,7 @@ async function main(){
     
     try{
         var result = await fundingAccount.viewFunction({
-            contractId: "testing-nearcon-keypom.testnet",
+            contractId: KEYPOM_CONTRACT,
             methodName: "get_drop_information",
             args: {
                 drop_id: "nearcon-23"
@@ -164,7 +164,7 @@ async function main(){
     while(!doesDropExist){
         try{
             var result = await fundingAccount.viewFunction({
-                contractId: "testing-nearcon-keypom.testnet",
+                contractId: KEYPOM_CONTRACT,
                 methodName: "get_drop_information",
                 args: {
                     drop_id: "nearcon-23"
