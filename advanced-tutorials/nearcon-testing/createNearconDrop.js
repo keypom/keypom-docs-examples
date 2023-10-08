@@ -10,21 +10,22 @@ const { writeFile, mkdir, readFile } = require('fs/promises');
 
 const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
-const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
+//const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
+const KEYPOM_CONTRACT = "testing-nearcon-keypom.testnet"
+const DROP_ID = "nearcon-2023"
 const {
     initKeypom,
     getEnv,
     createDrop,
     formatLinkdropUrl,
-    generateKeys
+    generateKeys,
+    hashPassword
 } = keypom
 
 async function createNearconDrop(fundingAccount) {
     
     // Keep track of an array of the key pairs we create and the public keys we pass into the contract
 	// let keyPairs = await generateKeyPairs(1); 
-
-    const drop_id = "nearcon-23";
 
     let asset_data = [
         {uses: 1, assets: [null], config: {permissions: "claim"}}, // Password protected scan into the event
@@ -36,30 +37,33 @@ async function createNearconDrop(fundingAccount) {
 			contractId: KEYPOM_CONTRACT, 
 			methodName: 'create_drop', 
 			args: {
-				drop_id,
+				drop_id: DROP_ID,
                 asset_data,
                 key_data: [],
-                config:{
-                    delete_empty_drop: false
+                drop_config:{
+                    // delete_empty_drop: false,
+                    extra_allowance_per_key: parseNearAmount("0.02")
                 }
 			}, 
 			gas: "300000000000000",
 		});
+        var result = await fundingAccount.viewFunction({
+            contractId: KEYPOM_CONTRACT,
+            methodName: "get_drop_information",
+            args: {
+                drop_id: DROP_ID
+            }
+        })
+        console.log(result)
 	} catch(e) {
 		console.log('error creating drop: ', e);
 	}
-    var result = await fundingAccount.viewFunction({
-        contractId: KEYPOM_CONTRACT,
-        methodName: "get_drop_information",
-        args: {
-            drop_id
-        }
-    })
-    console.log(result)
+    
 }
 
-function hash(string) {
-    return createHash("sha256").update(Buffer.from(string)).digest("hex");
+async function hash(string) {
+    //return createHash("sha256").update(Buffer.from(string)).digest("hex");
+    return await hashPassword(string)
 }
   
 
@@ -71,12 +75,13 @@ async function generatePasswordsForKey(pubKey, usesWithPassword, basePassword) {
     for (var use of usesWithPassword) {
       let pw = basePassword + pubKey + use.toString()
       console.log('pw: ', pw)
-      passwords[use] = hash(hash(pw), true);
+      let firstHash = await hash(pw)
+      passwords[use] = await hash(firstHash);
     }
     
     return passwords;
   }
-async function addKeys (fundingAccount, originalTicketOwner, numKeys, numOwners,dropId,){
+async function addKeys (fundingAccount, originalTicketOwner, numKeys, numOwners, dropId,){
     console.log(`Number of keys to be added: ${numKeys}`)
     let { keyPairs, publicKeys, secretKeys } = await generateKeys({numKeys});
     
@@ -87,8 +92,10 @@ async function addKeys (fundingAccount, originalTicketOwner, numKeys, numOwners,
     
     for (var pk of publicKeys) {
       let password = await generatePasswordsForKey(pk.toString(), [1], basePassword);
+    //   let password = hash(hash("banana"))
       keyData.push({
         public_key: pk,
+        // password_by_use: {"1": password},
         password_by_use: password,
         key_owner: idx < numOwners ? originalTicketOwner : null,
       });
@@ -143,14 +150,14 @@ async function main(){
     let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, FUNDER_ACCOUNT_ID)
 
-    let numKeys = 100
+    let numKeys = 1
     
     try{
         var result = await fundingAccount.viewFunction({
             contractId: KEYPOM_CONTRACT,
             methodName: "get_drop_information",
             args: {
-                drop_id: "nearcon-23"
+                drop_id: DROP_ID
             }
         })
         console.log(result)
@@ -167,7 +174,7 @@ async function main(){
                 contractId: KEYPOM_CONTRACT,
                 methodName: "get_drop_information",
                 args: {
-                    drop_id: "nearcon-23"
+                    drop_id: DROP_ID
                 }
             })
             doesDropExist = true
@@ -196,7 +203,7 @@ async function main(){
     for (let i = 0; i < numKeys; i += 50) {
         // minqi owns half the keys
         let numOwners = Math.min(numKeys - i, 50)/2
-        let returnKeyData = await addKeys(fundingAccount, "minqi.testnet", Math.min(numKeys - i, 50), numOwners, "nearcon-23")
+        let returnKeyData = await addKeys(fundingAccount, "minqi.testnet", Math.min(numKeys - i, 50), numOwners, DROP_ID)
         for (var returnedKeyData of returnKeyData){
             keyData.keyPairs.push(returnedKeyData.keypair)
             keyData.publicKeys.push(returnedKeyData.public_key)
