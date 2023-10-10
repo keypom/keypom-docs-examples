@@ -47,7 +47,7 @@ async function main(){
 
     let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, KEYPOM_CONTRACT)
-    const keyPair = KeyPair.fromString("2zGC8wn75nSTJMy8ApyfXy5FdHTj1MR6ZgKoaQypTdgCXsNymbetKEePir5VZG7c5JJPqJGFPDaKRDnqCGvomKZz");
+    const keyPair = KeyPair.fromString("2wYCnJ79yzbrZWvas8F8oEm3ktfou2Fwez2AkJy6KdBQcu43VppZVHNQ7Z66htbzY2xkyBhRXdHGp98LNBXTBMWc");
     myKeyStore.setKey(NETWORK_ID, KEYPOM_CONTRACT, keyPair)
     const NEW_ACCOUNT_ID = "m000n.testing-nearcon23.testnet";
     

@@ -48,9 +48,10 @@ async function main(){
     };  
 
     let near = new Near(nearConfig);
-    const fundingAccount = new Account(near.connection, "m000n-1.testing-nearcon23.testnet")
-    const keyPair = KeyPair.fromString("4eNHis9nHPE2wFJ8U1WvFw3kKuCffgQn6XFgdVNguoBYx3YQNv84Hgnt1EBN1T4BLLwxersLgtkQnNWKKx26EQ47");
-    myKeyStore.setKey(NETWORK_ID, "m000n-1.testing-nearcon23.testnet", keyPair)
+    const NEW_ACCOUNT_ID = "m000n-2.testing-nearcon23.testnet"
+    const fundingAccount = new Account(near.connection, NEW_ACCOUNT_ID)
+    const keyPair = KeyPair.fromString("3EMfiLiCePmxsZbxNP3Q5Wt4gQ2LqNpsKM24v4wfLx3jBkuzsfzyQ231ZcmJAUFgViBvdaPxdXfo2H4KZWaJnHVN");
+    myKeyStore.setKey(NETWORK_ID, NEW_ACCOUNT_ID, keyPair)
     
     const TERA_GAS = 1000000000000;
     try{
