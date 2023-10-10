@@ -13,7 +13,9 @@ const { writeFile, mkdir, readFile } = require('fs/promises');
 const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
 const { generatePasswordForClaim, generatePasswordsForKey, hash, sdkHash } = require("./utils");
+
 const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
+const NEARCON_ACCOUNT_FACTORY = "testing-nearcon23.testnet"
 const {
     initKeypom,
     getEnv,
@@ -46,30 +48,25 @@ async function main(){
     };  
 
     let near = new Near(nearConfig);
-    const fundingAccount = new Account(near.connection, KEYPOM_CONTRACT)
-    const keyPair = KeyPair.fromString("2zGC8wn75nSTJMy8ApyfXy5FdHTj1MR6ZgKoaQypTdgCXsNymbetKEePir5VZG7c5JJPqJGFPDaKRDnqCGvomKZz");
-    myKeyStore.setKey(NETWORK_ID, KEYPOM_CONTRACT, keyPair)
-
-    let basePassword = "nearcon23-password"
-    console.log(keyPair.publicKey.toString())
-    let passwordForClaim = await generatePasswordForClaim(keyPair.publicKey.toString(), 1, basePassword)
+    const fundingAccount = new Account(near.connection, "m000n-1.testing-nearcon23.testnet")
+    const keyPair = KeyPair.fromString("4eNHis9nHPE2wFJ8U1WvFw3kKuCffgQn6XFgdVNguoBYx3YQNv84Hgnt1EBN1T4BLLwxersLgtkQnNWKKx26EQ47");
+    myKeyStore.setKey(NETWORK_ID, "m000n-1.testing-nearcon23.testnet", keyPair)
     
     const TERA_GAS = 1000000000000;
     try{
         await fundingAccount.functionCall({
-            contractId: KEYPOM_CONTRACT,
-            methodName: "claim",
+            contractId: NEARCON_ACCOUNT_FACTORY,
+            methodName: "ft_transfer",
             args: {
-                account_id: KEYPOM_CONTRACT,
-                fc_args: [],
-                // password: hash("banana")
-                password: passwordForClaim
+                // New account ID from user input
+                receiver_id: "m00n.testing-nearcon23.testnet",
+                amount: "1000000000000000000000000"
             },
             gas: (120*TERA_GAS).toString(),
         })
     }catch(e){
         console.log(e)
-        console.log("claim failed")
+        console.log("transfer failed")
     }
 }
 

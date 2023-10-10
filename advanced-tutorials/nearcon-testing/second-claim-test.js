@@ -47,8 +47,9 @@ async function main(){
 
     let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, KEYPOM_CONTRACT)
-    const keyPair = KeyPair.fromString("2iWKBMvq7ysMuXEJ9JHcszH9BMYgwgQoLYNzogWVDjRovVfz6JfUn7rsLGfP7W47EAUPpFm94mivs5pxm5QJDtF4");
+    const keyPair = KeyPair.fromString("2zGC8wn75nSTJMy8ApyfXy5FdHTj1MR6ZgKoaQypTdgCXsNymbetKEePir5VZG7c5JJPqJGFPDaKRDnqCGvomKZz");
     myKeyStore.setKey(NETWORK_ID, KEYPOM_CONTRACT, keyPair)
+    const NEW_ACCOUNT_ID = "m000n.testing-nearcon23.testnet";
     
     let numKeys = 1
     const newKeypair = await generateKeys({numKeys})
@@ -59,12 +60,14 @@ async function main(){
             methodName: "create_account_and_claim",
             args: {
                 // New account ID from user input
-                new_account_id: "m00n.testing-nearcon23.testnet",
+                new_account_id: NEW_ACCOUNT_ID,
                 new_public_key: newKeypair.publicKeys[0],
                 fc_args: [],
             },
             gas: (120*TERA_GAS).toString(),
         })
+
+        await writeFile(path.resolve(__dirname, 'new_account_keypair.json'), `${newKeypair.publicKeys[0]}, ${newKeypair.secretKeys[0]}`);
     }catch(e){
         console.log(e)
         console.log("claim failed")
