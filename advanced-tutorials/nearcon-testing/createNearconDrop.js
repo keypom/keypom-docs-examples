@@ -12,7 +12,7 @@ const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
 const { generatePasswordForClaim, generatePasswordsForKey, hash, sdkHash } = require("./utils");
 //const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
-const KEYPOM_CONTRACT = "testing-nearcon-keypom.testnet"
+const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
 const DROP_ID = "nearcon-2023"
 const {
     initKeypom,
@@ -47,7 +47,7 @@ async function main(){
     let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, FUNDER_ACCOUNT_ID)
 
-    let numKeys = 1
+    let numKeys = 100
     
     try{
         var result = await fundingAccount.viewFunction({

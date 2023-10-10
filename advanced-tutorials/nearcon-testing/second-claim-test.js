@@ -13,7 +13,7 @@ const { writeFile, mkdir, readFile } = require('fs/promises');
 const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
 const { generatePasswordForClaim, generatePasswordsForKey, hash, sdkHash } = require("./utils");
-const KEYPOM_CONTRACT = "testing-nearcon-keypom.testnet"
+const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
 const {
     initKeypom,
     getEnv,
@@ -47,23 +47,21 @@ async function main(){
 
     let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, KEYPOM_CONTRACT)
-    const keyPair = KeyPair.fromString("w9acLN98k6VC5iQTepUKGz6NjHd64U9xZ4VjMQ2TWFqF2doRrwHGKXxzrpC8759DSLFyGznraVGeCVobbaMMA5K");
+    const keyPair = KeyPair.fromString("2iWKBMvq7ysMuXEJ9JHcszH9BMYgwgQoLYNzogWVDjRovVfz6JfUn7rsLGfP7W47EAUPpFm94mivs5pxm5QJDtF4");
     myKeyStore.setKey(NETWORK_ID, KEYPOM_CONTRACT, keyPair)
-
-    let basePassword = "nearcon23-password"
-    console.log(keyPair.publicKey.toString())
-    let passwordForClaim = await generatePasswordForClaim(keyPair.publicKey.toString(), 1, basePassword)
     
+    let numKeys = 1
+    const newKeypair = await generateKeys({numKeys})
     const TERA_GAS = 1000000000000;
     try{
         await fundingAccount.functionCall({
             contractId: KEYPOM_CONTRACT,
-            methodName: "claim",
+            methodName: "create_account_and_claim",
             args: {
-                account_id: KEYPOM_CONTRACT,
+                // New account ID from user input
+                new_account_id: "m00n.testing-nearcon23.testnet",
+                new_public_key: newKeypair.publicKeys[0],
                 fc_args: [],
-                // password: hash("banana")
-                password: passwordForClaim
             },
             gas: (120*TERA_GAS).toString(),
         })
@@ -71,7 +69,6 @@ async function main(){
         console.log(e)
         console.log("claim failed")
     }
-
 }
 
 
