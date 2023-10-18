@@ -13,7 +13,7 @@ const { writeFile, mkdir, readFile } = require('fs/promises');
 const keypom = require("@keypom/core");
 const { DAO_CONTRACT, DAO_BOT_CONTRACT, DAO_BOT_CONTRACT_MAINNET, DAO_CONTRACT_MAINNET } = require("./configurations");
 const { generatePasswordForClaim, generatePasswordsForKey, hash, sdkHash } = require("./utils");
-const KEYPOM_CONTRACT = "nearcon2023.keypom.testnet"
+const KEYPOM_CONTRACT = "ncon23.keypom.testnet"
 const {
     initKeypom,
     getEnv,
@@ -47,13 +47,28 @@ async function main(){
 
     let near = new Near(nearConfig);
     const fundingAccount = new Account(near.connection, KEYPOM_CONTRACT)
-    const keyPair = KeyPair.fromString("2wYCnJ79yzbrZWvas8F8oEm3ktfou2Fwez2AkJy6KdBQcu43VppZVHNQ7Z66htbzY2xkyBhRXdHGp98LNBXTBMWc");
+    const keyPair = KeyPair.fromString("UbLzssMN5QdQurKm7TGsKnRRGU819BRvWqC2Ehm1TC6LGN9kLr5Zu5RoSm42G57kUK3pLZJJfZg6NEqmFhMKvxx");
     myKeyStore.setKey(NETWORK_ID, KEYPOM_CONTRACT, keyPair)
-    const NEW_ACCOUNT_ID = "m000n.testing-nearcon23.testnet";
+    const NEW_ACCOUNT_ID = "moon.ncon-factory.keypom.testnet";
     
     let numKeys = 1
     const newKeypair = await generateKeys({numKeys})
     const TERA_GAS = 1000000000000;
+    // Get required gas
+    let requiredGas = (63.4*TERA_GAS).toString()
+    try{
+        let keyInfo = await fundingAccount.viewFunction({
+            contractId: KEYPOM_CONTRACT,
+            methodName: "get_key_information",
+            args:{
+                key: keyPair.publicKey.toString()
+            }
+        })
+
+        requiredGas = keyInfo.required_gas
+    }catch(e){
+        
+    }
     try{
         await fundingAccount.functionCall({
             contractId: KEYPOM_CONTRACT,
@@ -64,7 +79,7 @@ async function main(){
                 new_public_key: newKeypair.publicKeys[0],
                 fc_args: [],
             },
-            gas: (120*TERA_GAS).toString(),
+            gas: requiredGas,
         })
 
         await writeFile(path.resolve(__dirname, 'new_account_keypair.json'), `${newKeypair.publicKeys[0]}, ${newKeypair.secretKeys[0]}`);
