@@ -2,7 +2,7 @@ const { parseNearAmount } = require("@near-js/utils");
 const { UnencryptedFileSystemKeyStore } = require("@near-js/keystores-node");
 const { Near } = require("@near-js/wallet-account");
 const { Account } = require("@near-js/accounts");
-const { initKeypom, createDrop, getEnv, formatLinkdropUrl } = require("@keypom/core");
+const { initKeypom, createDrop, getEnv, formatLinkdropUrl, getPubFromSecret } = require("@keypom/core");
 
 const path = require("path");
 const homedir = require("os").homedir();
@@ -14,7 +14,7 @@ async function nftDropKeypom(){
 	const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
 	const YOUR_ACCOUNT = "mintlu.near";
 	const NFT_TOKEN_ID = "keypom-token-" + Date.now().toString();
-	const NFT_CONTRACT = "nft.examples.testnet";
+	const NFT_CONTRACT = "nft.keypom.near";
 
 	let keyStore = new UnencryptedFileSystemKeyStore(credentialsPath);
 
@@ -29,6 +29,8 @@ async function nftDropKeypom(){
 
 	let near = new Near(nearConfig);
 	const fundingAccount = new Account(near.connection, YOUR_ACCOUNT);
+	var key = await getPubFromSecret("wnpG2CrqmToJDmpwcDx9VSfUMLAvQgGXuYz8gJLzb6L3Vk296XnuX1386qDtXHyMLJDBBZMvABKvwVrahUDirvm")
+	console.log(key)
 
 	// Mint 1 NFT for the funder from the NFT contract outlined in the NFT_DATA
 	await fundingAccount.functionCall({
@@ -61,7 +63,7 @@ async function nftDropKeypom(){
 	const { keys } = await createDrop({
 	    account: fundingAccount,
 	    numKeys: 1,
-	    depositPerUseNEAR: "1",
+	    depositPerUseNEAR: "0.1",
 	    nftData: {
 		    // NFT Contract Id that the tokens will come from
 		    contractId: NFT_CONTRACT,

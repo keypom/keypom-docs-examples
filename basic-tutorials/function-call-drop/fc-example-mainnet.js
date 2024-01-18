@@ -13,7 +13,7 @@ async function fcDropKeypom(){
 	const credentialsPath =  path.join(homedir, CREDENTIALS_DIR);
 	const YOUR_ACCOUNT = "mintlu.near";
 	const NFT_TOKEN_ID = "keypom-token-" + Date.now().toString();
-	const NFT_CONTRACT = "nft.examples.testnet";
+	const NFT_CONTRACT = "nft-v2.keypom.near";
 	
 	let keyStore = new UnencryptedFileSystemKeyStore(credentialsPath);
 
@@ -42,7 +42,7 @@ async function fcDropKeypom(){
 	const {keys} = await createDrop({
 	    account: fundingAccount,
 	    numKeys: 1,
-	    depositPerUseNEAR: "1",
+	    depositPerUseNEAR: "0",
 		// With our function call for this drop, we wish to allow the user to lazy mint an NFT
 	    fcData: {
 		// 2D array of function calls. In this case, there is 1 function call to make for a key use
@@ -62,6 +62,7 @@ async function fcDropKeypom(){
 		    	    }
 		    	}),
 				accountIdField: "receiver_id",
+				dropIdField: "mint_id",
 		    	// Attached deposit of 1 $NEAR for when the receiver makes this function call
 		    	attachedDeposit: parseNearAmount("1")
 		    }]
